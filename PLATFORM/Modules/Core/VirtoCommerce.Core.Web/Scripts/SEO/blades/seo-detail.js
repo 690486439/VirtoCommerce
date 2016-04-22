@@ -19,38 +19,24 @@
         }
 
         angular.copy(blade.currentEntity, blade.origEntity);
-        $scope.bladeClose();
+        if (!blade.noClose) {
+            $scope.bladeClose();
+        }
 
         if (blade.parentRefresh)
             blade.parentRefresh();
     }
 
-    $scope.storeDuplicateValidator = function (value) {
-        var data = blade.currentEntity;
-        return _.all(blade.seoContainerObject.seoInfos, function (x) {
-            return x === blade.origEntity ||
-                   !x.isActive ||
-                   x.storeId !== value ||
-                   x.languageCode !== data.languageCode; // && x.semanticUrl !== data.semanticUrl
-        });
-    };
-
-    $scope.languageDuplicateValidator = function (value) {
-        var data = blade.currentEntity;
-        return _.all(blade.seoContainerObject.seoInfos, function (x) {
-            return x === blade.origEntity ||
-                   !x.isActive ||
-                   x.storeId !== data.storeId ||
-                   x.languageCode !== value; // && x.semanticUrl !== data.semanticUrl
-        });
-    };
+    function saveChanges_noClose() {
+        blade.noClose = true;
+        $scope.saveChanges();
+    }
 
     function isValid(data) {
         // check required and valid Url requirements
         return data.semanticUrl &&
                $scope.semanticUrlValidator(data.semanticUrl) &&
-               (!data.isActive ||
-                 $scope.duplicateValidator(data.semanticUrl));
+               $scope.duplicateValidator(data.semanticUrl);
     }
 
     $scope.semanticUrlValidator = function (value) {
@@ -60,12 +46,10 @@
     };
 
     $scope.duplicateValidator = function (value) {
-        var data = blade.currentEntity;
         return _.all(blade.seoContainerObject.seoInfos, function (x) {
             return x === blade.origEntity ||
-                   !x.isActive ||
-                   x.storeId !== data.storeId ||
-                   x.languageCode !== data.languageCode; // && x.semanticUrl !== data.semanticUrl
+                   x.storeId !== blade.currentEntity.storeId ||
+                   x.semanticUrl !== value;
         });
     };
 
@@ -74,13 +58,13 @@
     }
 
     function canSave() {
-        return isDirty() && isValid(blade.currentEntity); // isValid formScope && formScope.$valid;
+        return (blade.isNew || isDirty()) && isValid(blade.currentEntity); // isValid formScope && formScope.$valid;
     }
 
     $scope.isValid = canSave;
 
     blade.onClose = function (closeCallback) {
-        bladeNavigationService.showConfirmationIfNeeded(isDirty(), canSave(), blade, $scope.saveChanges, closeCallback, "core.dialogs.seo-save.title", "core.dialogs.seo-save.message");
+        bladeNavigationService.showConfirmationIfNeeded(isDirty(), canSave(), blade, saveChanges_noClose, closeCallback, "core.dialogs.seo-save.title", "core.dialogs.seo-save.message");
     };
 
     blade.toolbarCommands = [

@@ -79,7 +79,8 @@ namespace VirtoCommerce.Storefront.Services
 
                 foreach (var localizedBlob in localizedBlobs.OrderBy(x => x.Name))
                 {
-                    var contentItem = _contentItemFactory(localizedBlob.Path);
+                    var blobRelativePath = "/" + localizedBlob.Path.TrimStart('/');
+                    var contentItem = _contentItemFactory(blobRelativePath);
                     if (contentItem != null)
                     {
                         if (contentItem.Name == null)
@@ -87,10 +88,10 @@ namespace VirtoCommerce.Storefront.Services
                             contentItem.Name = localizedBlob.Name;
                         }
                         contentItem.Language = localizedBlob.Language;
-                        contentItem.FileName = Path.GetFileName(localizedBlob.Path);
-                        contentItem.StoragePath = "/" + localizedBlob.Path.Replace(baseStoreContentPath + "/", string.Empty).TrimStart('/');
+                        contentItem.FileName = Path.GetFileName(blobRelativePath);
+                        contentItem.StoragePath = "/" + blobRelativePath.Replace(baseStoreContentPath + "/", string.Empty).TrimStart('/');
 
-                        LoadAndRenderContentItem(localizedBlob.Path, contentItem);
+                        LoadAndRenderContentItem(blobRelativePath, contentItem);
 
                         retVal.Add(contentItem);
                     }
@@ -223,7 +224,14 @@ namespace VirtoCommerce.Storefront.Services
                 Name = parts.FirstOrDefault();
                 if (parts.Count() == 3)
                 {
-                    Language = new Language(parts[1]);
+                    try
+                    {
+                        Language = new Language(parts[1]);
+                    }
+                    catch(Exception)
+                    {
+                        Language = Language.InvariantLanguage;
+                    }
                 }
             }
             public string Name { get; private set; }
