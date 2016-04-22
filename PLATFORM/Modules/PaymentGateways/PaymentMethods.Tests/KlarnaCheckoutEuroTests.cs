@@ -102,7 +102,7 @@ namespace PaymentMethods.Tests
             var dynamicPropertyService = new DynamicPropertyService(platformRepositoryFactory);
             var settingManager = new SettingsManager(null, null, null, null);
 
-            var orderService = new CustomerOrderServiceImpl(orderRepositoryFactory, new TimeBasedNumberGeneratorImpl(), orderEventPublisher, cartService, GetItemService(), dynamicPropertyService, settingManager, null, null);
+            var orderService = new CustomerOrderServiceImpl(orderRepositoryFactory, new TimeBasedNumberGeneratorImpl(), orderEventPublisher, cartService, GetItemService(), dynamicPropertyService, null, null, null);
             return orderService;
         }
 
@@ -156,7 +156,7 @@ namespace PaymentMethods.Tests
 
         private IItemService GetItemService()
         {
-            return new ItemServiceImpl(() => { return GetRepository(); }, null);
+            return new ItemServiceImpl(GetRepository, null, null);
         }
 
         private ICatalogRepository GetRepository()

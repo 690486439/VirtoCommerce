@@ -9,8 +9,6 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-
-
 namespace VirtoCommerce.Client.Model
 {
     /// <summary>
@@ -19,62 +17,6 @@ namespace VirtoCommerce.Client.Model
     [DataContract]
     public partial class VirtoCommerceDomainCatalogModelCategory :  IEquatable<VirtoCommerceDomainCatalogModelCategory>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VirtoCommerceDomainCatalogModelCategory" /> class.
-        /// Initializes a new instance of the <see cref="VirtoCommerceDomainCatalogModelCategory" />class.
-        /// </summary>
-        /// <param name="CatalogId">CatalogId.</param>
-        /// <param name="Catalog">Catalog.</param>
-        /// <param name="ParentId">ParentId.</param>
-        /// <param name="Code">Code.</param>
-        /// <param name="TaxType">TaxType.</param>
-        /// <param name="Name">Name.</param>
-        /// <param name="Path">Path.</param>
-        /// <param name="IsVirtual">IsVirtual.</param>
-        /// <param name="Level">Level.</param>
-        /// <param name="Parents">Parents.</param>
-        /// <param name="Priority">Priority.</param>
-        /// <param name="IsActive">IsActive.</param>
-        /// <param name="Children">Children.</param>
-        /// <param name="Properties">Properties.</param>
-        /// <param name="PropertyValues">PropertyValues.</param>
-        /// <param name="Links">Links.</param>
-        /// <param name="SeoInfos">SeoInfos.</param>
-        /// <param name="Images">Images.</param>
-        /// <param name="CreatedDate">CreatedDate.</param>
-        /// <param name="ModifiedDate">ModifiedDate.</param>
-        /// <param name="CreatedBy">CreatedBy.</param>
-        /// <param name="ModifiedBy">ModifiedBy.</param>
-        /// <param name="Id">Id.</param>
-
-        public VirtoCommerceDomainCatalogModelCategory(string CatalogId = null, VirtoCommerceDomainCatalogModelCatalog Catalog = null, string ParentId = null, string Code = null, string TaxType = null, string Name = null, string Path = null, bool? IsVirtual = null, int? Level = null, List<VirtoCommerceDomainCatalogModelCategory> Parents = null, int? Priority = null, bool? IsActive = null, List<VirtoCommerceDomainCatalogModelCategory> Children = null, List<VirtoCommerceDomainCatalogModelProperty> Properties = null, List<VirtoCommerceDomainCatalogModelPropertyValue> PropertyValues = null, List<VirtoCommerceDomainCatalogModelCategoryLink> Links = null, List<VirtoCommerceDomainCommerceModelSeoInfo> SeoInfos = null, List<VirtoCommerceDomainCatalogModelImage> Images = null, DateTime? CreatedDate = null, DateTime? ModifiedDate = null, string CreatedBy = null, string ModifiedBy = null, string Id = null)
-        {
-            this.CatalogId = CatalogId;
-            this.Catalog = Catalog;
-            this.ParentId = ParentId;
-            this.Code = Code;
-            this.TaxType = TaxType;
-            this.Name = Name;
-            this.Path = Path;
-            this.IsVirtual = IsVirtual;
-            this.Level = Level;
-            this.Parents = Parents;
-            this.Priority = Priority;
-            this.IsActive = IsActive;
-            this.Children = Children;
-            this.Properties = Properties;
-            this.PropertyValues = PropertyValues;
-            this.Links = Links;
-            this.SeoInfos = SeoInfos;
-            this.Images = Images;
-            this.CreatedDate = CreatedDate;
-            this.ModifiedDate = ModifiedDate;
-            this.CreatedBy = CreatedBy;
-            this.ModifiedBy = ModifiedBy;
-            this.Id = Id;
-            
-        }
-
         /// <summary>
         /// Gets or Sets CatalogId
         /// </summary>
@@ -172,6 +114,12 @@ namespace VirtoCommerce.Client.Model
         public List<VirtoCommerceDomainCatalogModelCategoryLink> Links { get; set; }
 
         /// <summary>
+        /// Gets or Sets SeoObjectType
+        /// </summary>
+        [DataMember(Name="seoObjectType", EmitDefaultValue=false)]
+        public string SeoObjectType { get; private set; }
+
+        /// <summary>
         /// Gets or Sets SeoInfos
         /// </summary>
         [DataMember(Name="seoInfos", EmitDefaultValue=false)]
@@ -182,6 +130,12 @@ namespace VirtoCommerce.Client.Model
         /// </summary>
         [DataMember(Name="images", EmitDefaultValue=false)]
         public List<VirtoCommerceDomainCatalogModelImage> Images { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Outlines
+        /// </summary>
+        [DataMember(Name="outlines", EmitDefaultValue=false)]
+        public List<VirtoCommerceDomainCatalogModelOutline> Outlines { get; set; }
 
         /// <summary>
         /// Gets or Sets CreatedDate
@@ -213,7 +167,6 @@ namespace VirtoCommerce.Client.Model
         [DataMember(Name="id", EmitDefaultValue=false)]
         public string Id { get; set; }
 
-
         /// <summary>
         /// Returns the string presentation of the object
         /// </summary>
@@ -238,14 +191,15 @@ namespace VirtoCommerce.Client.Model
             sb.Append("  Properties: ").Append(Properties).Append("\n");
             sb.Append("  PropertyValues: ").Append(PropertyValues).Append("\n");
             sb.Append("  Links: ").Append(Links).Append("\n");
+            sb.Append("  SeoObjectType: ").Append(SeoObjectType).Append("\n");
             sb.Append("  SeoInfos: ").Append(SeoInfos).Append("\n");
             sb.Append("  Images: ").Append(Images).Append("\n");
+            sb.Append("  Outlines: ").Append(Outlines).Append("\n");
             sb.Append("  CreatedDate: ").Append(CreatedDate).Append("\n");
             sb.Append("  ModifiedDate: ").Append(ModifiedDate).Append("\n");
             sb.Append("  CreatedBy: ").Append(CreatedBy).Append("\n");
             sb.Append("  ModifiedBy: ").Append(ModifiedBy).Append("\n");
             sb.Append("  Id: ").Append(Id).Append("\n");
-            
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -363,6 +317,11 @@ namespace VirtoCommerce.Client.Model
                     this.Links.SequenceEqual(other.Links)
                 ) && 
                 (
+                    this.SeoObjectType == other.SeoObjectType ||
+                    this.SeoObjectType != null &&
+                    this.SeoObjectType.Equals(other.SeoObjectType)
+                ) && 
+                (
                     this.SeoInfos == other.SeoInfos ||
                     this.SeoInfos != null &&
                     this.SeoInfos.SequenceEqual(other.SeoInfos)
@@ -371,6 +330,11 @@ namespace VirtoCommerce.Client.Model
                     this.Images == other.Images ||
                     this.Images != null &&
                     this.Images.SequenceEqual(other.Images)
+                ) && 
+                (
+                    this.Outlines == other.Outlines ||
+                    this.Outlines != null &&
+                    this.Outlines.SequenceEqual(other.Outlines)
                 ) && 
                 (
                     this.CreatedDate == other.CreatedDate ||
@@ -410,81 +374,85 @@ namespace VirtoCommerce.Client.Model
             {
                 int hash = 41;
                 // Suitable nullity checks etc, of course :)
-                
+
                 if (this.CatalogId != null)
                     hash = hash * 59 + this.CatalogId.GetHashCode();
-                
+
                 if (this.Catalog != null)
                     hash = hash * 59 + this.Catalog.GetHashCode();
-                
+
                 if (this.ParentId != null)
                     hash = hash * 59 + this.ParentId.GetHashCode();
-                
+
                 if (this.Code != null)
                     hash = hash * 59 + this.Code.GetHashCode();
-                
+
                 if (this.TaxType != null)
                     hash = hash * 59 + this.TaxType.GetHashCode();
-                
+
                 if (this.Name != null)
                     hash = hash * 59 + this.Name.GetHashCode();
-                
+
                 if (this.Path != null)
                     hash = hash * 59 + this.Path.GetHashCode();
-                
+
                 if (this.IsVirtual != null)
                     hash = hash * 59 + this.IsVirtual.GetHashCode();
-                
+
                 if (this.Level != null)
                     hash = hash * 59 + this.Level.GetHashCode();
-                
+
                 if (this.Parents != null)
                     hash = hash * 59 + this.Parents.GetHashCode();
-                
+
                 if (this.Priority != null)
                     hash = hash * 59 + this.Priority.GetHashCode();
-                
+
                 if (this.IsActive != null)
                     hash = hash * 59 + this.IsActive.GetHashCode();
-                
+
                 if (this.Children != null)
                     hash = hash * 59 + this.Children.GetHashCode();
-                
+
                 if (this.Properties != null)
                     hash = hash * 59 + this.Properties.GetHashCode();
-                
+
                 if (this.PropertyValues != null)
                     hash = hash * 59 + this.PropertyValues.GetHashCode();
-                
+
                 if (this.Links != null)
                     hash = hash * 59 + this.Links.GetHashCode();
-                
+
+                if (this.SeoObjectType != null)
+                    hash = hash * 59 + this.SeoObjectType.GetHashCode();
+
                 if (this.SeoInfos != null)
                     hash = hash * 59 + this.SeoInfos.GetHashCode();
-                
+
                 if (this.Images != null)
                     hash = hash * 59 + this.Images.GetHashCode();
-                
+
+                if (this.Outlines != null)
+                    hash = hash * 59 + this.Outlines.GetHashCode();
+
                 if (this.CreatedDate != null)
                     hash = hash * 59 + this.CreatedDate.GetHashCode();
-                
+
                 if (this.ModifiedDate != null)
                     hash = hash * 59 + this.ModifiedDate.GetHashCode();
-                
+
                 if (this.CreatedBy != null)
                     hash = hash * 59 + this.CreatedBy.GetHashCode();
-                
+
                 if (this.ModifiedBy != null)
                     hash = hash * 59 + this.ModifiedBy.GetHashCode();
-                
+
                 if (this.Id != null)
                     hash = hash * 59 + this.Id.GetHashCode();
-                
+
                 return hash;
             }
         }
 
     }
-
-
 }
