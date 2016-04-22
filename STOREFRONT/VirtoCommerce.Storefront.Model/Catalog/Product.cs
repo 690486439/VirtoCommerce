@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using VirtoCommerce.Storefront.Model.Common;
 using VirtoCommerce.Storefront.Model.Marketing;
-using VirtoCommerce.Storefront.Model.Marketing.Services;
 
 namespace VirtoCommerce.Storefront.Model.Catalog
 {
@@ -17,8 +16,9 @@ namespace VirtoCommerce.Storefront.Model.Catalog
             Assets = new List<Asset>();
             Variations = new List<Product>();
             Images = new List<Image>();
-            Descriptions = new List<LocalizedString>();
+            Descriptions = new List<EditorialReview>();
             Discounts = new List<Discount>();
+            Associations = new List<ProductAssociation>();
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace VirtoCommerce.Storefront.Model.Catalog
         /// List og variation properties
         /// </summary>
         public ICollection<CatalogProperty> VariationProperties { get; set; }
-      
+
         /// <summary>
         /// List of product assets
         /// </summary>
@@ -182,6 +182,11 @@ namespace VirtoCommerce.Storefront.Model.Catalog
         public ICollection<Product> Variations { get; set; }
 
         /// <summary>
+        /// Related or associated products
+        /// </summary>
+        public ICollection<ProductAssociation> Associations { get; set; }
+
+        /// <summary>
         /// Product description in current language
         /// </summary>
         public string Description { get; set; }
@@ -189,7 +194,7 @@ namespace VirtoCommerce.Storefront.Model.Catalog
         /// <summary>
         /// Product editorial reviews
         /// </summary>
-        public ICollection<LocalizedString> Descriptions { get; set; }
+        public ICollection<EditorialReview> Descriptions { get; set; }
 
         /// <summary>
         /// Current product price
@@ -200,7 +205,7 @@ namespace VirtoCommerce.Storefront.Model.Catalog
         /// Product prices foe other currencies
         /// </summary>
         public ICollection<ProductPrice> Prices { get; set; }
-      
+
         /// <summary>
         /// Inventory info
         /// </summary>
@@ -258,8 +263,10 @@ namespace VirtoCommerce.Storefront.Model.Catalog
                     Price.ActiveDiscount = discount;
                 }
             }
-        } 
+        }
         #endregion
+
+        public string Url { get; set; }
 
         public override string ToString()
         {
