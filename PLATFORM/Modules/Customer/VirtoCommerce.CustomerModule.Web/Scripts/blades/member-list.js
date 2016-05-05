@@ -9,18 +9,17 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
 
     blade.refresh = function (parentRefresh) {
         blade.isLoading = true;
+        $scope.pageSettings.currentPage = $scope.pageSettings.loadingNextPage ? $scope.pageSettings.currentPage : 1;
         members.search(
             {
                 memberType: blade.memberType,
                 memberId: blade.currentEntity.id,
                 keyword: filter.keyword ? filter.keyword : undefined,
                 sort: uiGridHelper.getSortExpression($scope),
-                skip: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-                take: $scope.pageSettings.itemsPerPageCount
+                skip: ($scope.pageSettings.currentPage - ($scope.pageSettings.loadingNextPage ? 0 : 1)) * $scope.pageSettings.itemsPerPageCount,
+                take: $scope.pageSettings.itemsPerPageCount + 1
             },
             function (data) {
-                blade.isLoading = false;
-                $scope.pageSettings.totalItems = data.totalCount;
                 // precalculate icon
                 var memberTypeDefinition;
                 _.each(data.members, function (x) {
@@ -28,11 +27,17 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
                         x._memberTypeIcon = memberTypeDefinition.icon;
                     }
                 });
-                $scope.listEntries = data.members;
 
+                $scope.listEntries = $scope.listEntries || [];
+                uiGridHelper.setGridData($scope, $scope.listEntries, data.members);
+                blade.isLoading = false;
+                
                 //Set navigation breadcrumbs
                 setBreadcrumbs();
-            }, function (error) { bladeNavigationService.setError('Error ' + error.status, blade); });
+            }, function (error) {
+                $scope.gridApi.infiniteScroll.dataLoaded();
+                bladeNavigationService.setError('Error ' + error.status, blade);
+            });
 
         if (parentRefresh && blade.parentRefresh) {
             blade.parentRefresh();
@@ -218,23 +223,21 @@ function ($scope, members, dialogService, bladeUtils, uiGridHelper, memberTypesR
         if (filter.keyword === null) {
             blade.memberType = undefined;
         }
-        if ($scope.pageSettings.currentPage > 1) {
-            $scope.pageSettings.currentPage = 1;
-        } else {
-            blade.refresh();
-        }
+        blade.refresh();
     };
 
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
         uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
+            gridApi.infiniteScroll.on.needLoadMoreData($scope, function () {
+                $scope.pageSettings.loadingNextPage = true;
+                blade.refresh();
+            });
             uiGridHelper.bindRefreshOnSortChanged($scope);
         });
 
-        bladeUtils.initializePagination($scope);
+        bladeUtils.initializePaginationAndRefresh($scope);
     };
 
-
-    //No need to call this because page 'pageSettings.currentPage' is watched!!! It would trigger subsequent duplicated req...
-    //blade.refresh();
+    // blade.refresh() is called in bladeUtils.initializePaginationAndRefresh()
 }]);

@@ -6,18 +6,18 @@ function ($scope, roles, bladeUtils, bladeNavigationService, dialogService, uiGr
 
     blade.refresh = function () {
         blade.isLoading = true;
-
+        $scope.pageSettings.currentPage = $scope.pageSettings.loadingNextPage ? $scope.pageSettings.currentPage : 1;
         roles.search({
             keyword: filter.keyword,
             sort: uiGridHelper.getSortExpression($scope),
-            skipCount: ($scope.pageSettings.currentPage - 1) * $scope.pageSettings.itemsPerPageCount,
-            takeCount: $scope.pageSettings.itemsPerPageCount
+            skipCount: ($scope.pageSettings.currentPage - ($scope.pageSettings.loadingNextPage ? 0 : 1)) * $scope.pageSettings.itemsPerPageCount,
+            takeCount: $scope.pageSettings.itemsPerPageCount + 1
         }, function (data) {
+            blade.currentEntities = blade.currentEntities || [];
+            uiGridHelper.setGridData($scope, blade.currentEntities, data.roles);
             blade.isLoading = false;
-
-            $scope.pageSettings.totalItems = data.totalCount;
-            blade.currentEntities = data.roles;
         }, function (error) {
+            $scope.gridApi.infiniteScroll.dataLoaded();
             bladeNavigationService.setError('Error ' + error.status, blade);
         });
     };
@@ -111,23 +111,22 @@ function ($scope, roles, bladeUtils, bladeNavigationService, dialogService, uiGr
 
     var filter = $scope.filter = {};
     filter.criteriaChanged = function () {
-        if ($scope.pageSettings.currentPage > 1) {
-            $scope.pageSettings.currentPage = 1;
-        } else {
-            blade.refresh();
-        }
+        blade.refresh();
     };
 
     // ui-grid
     $scope.setGridOptions = function (gridOptions) {
         uiGridHelper.initialize($scope, gridOptions, function (gridApi) {
+            gridApi.infiniteScroll.on.needLoadMoreData($scope, function () {
+                $scope.pageSettings.loadingNextPage = true;
+                blade.refresh();
+            });
             uiGridHelper.bindRefreshOnSortChanged($scope);
         });
-        bladeUtils.initializePagination($scope);
+        bladeUtils.initializePaginationAndRefresh($scope);
     };
 
 
     // actions on load
-    //No need to call this because page 'pageSettings.currentPage' is watched!!! It would trigger subsequent duplicated req...
-    //blade.refresh();
+    // blade.refresh() is called in bladeUtils.initializePaginationAndRefresh()
 }]);

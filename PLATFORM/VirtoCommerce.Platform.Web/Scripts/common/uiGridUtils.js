@@ -10,6 +10,7 @@
                     enableGridMenu: true,
                     //enableVerticalScrollbar: uiGridConstants.scrollbars.NEVER,
                     //enableHorizontalScrollbar: uiGridConstants.scrollbars.NEVER,
+                    infiniteScrollRowsFromEnd: 5,
                     saveFocus: false,
                     saveFilter: false,
                     saveGrouping: false,
@@ -120,6 +121,25 @@
                 return (x.field ? x.field : x.name) + ':' + (x.sort.direction === uiGridConstants.ASC ? 'asc' : 'desc');
             });
             return sorts.join(';');
+        };
+
+        retVal.setGridData = function ($scope, targetArray, sourceArray) {
+            var moreDataPresent = sourceArray.length > $scope.pageSettings.itemsPerPageCount;
+            if (moreDataPresent) sourceArray.splice(sourceArray.length - 1, 1);
+
+            $scope.gridApi.infiniteScroll.saveScrollPercentage();
+            if ($scope.pageSettings.loadingNextPage) {
+                $scope.pageSettings.loadingNextPage = false;
+                $scope.pageSettings.currentPage++;
+            }
+
+            if ($scope.pageSettings.currentPage === 1) {
+                targetArray.length = 0;
+            }
+            // targetArray.push.apply(targetArray, sourceArray);
+            targetArray.push(...sourceArray);
+
+            $scope.gridApi.infiniteScroll.dataLoaded(false, moreDataPresent);
         };
 
         retVal.bindRefreshOnSortChanged = function ($scope) {
